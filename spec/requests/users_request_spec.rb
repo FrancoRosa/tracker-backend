@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe "Users", type: :request do
   # initialize test data
   let!(:users) { create_list(:user, 10) }
-  let(:user_id) { todos.first.id }
+  let(:user_id) { users.first.id }
 
-  # Test suite for GET /todos
+  # Test suite for GET /users
   describe 'GET /users' do
     # make HTTP get request before each example
     before { get '/users' }
@@ -21,7 +21,7 @@ RSpec.describe "Users", type: :request do
     end
   end
 
-  # Test suite for GET /todos/:id
+  # Test suite for GET /users/:id
   describe 'GET /users/:id' do
     before { get "/users/#{user_id}" }
 
@@ -49,7 +49,7 @@ RSpec.describe "Users", type: :request do
     end
   end
 
-  # Test suite for POST /todos
+  # Test suite for POST /users
   describe 'POST /user' do
     # valid payload
     let(:valid_attributes) { { name: 'Learn Elm' } }
@@ -67,7 +67,7 @@ RSpec.describe "Users", type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/users', params: { name: 'Foobar' } }
+      before { post '/users', params: { unknown: 'Foobar' } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -75,12 +75,12 @@ RSpec.describe "Users", type: :request do
 
       it 'returns a validation failure message' do
         expect(response.body)
-          .to match(/Validation failed: Created by can't be blank/)
+          .to match(/Validation failed: Name can't be blank/)
       end
     end
   end
 
-  # Test suite for PUT /todos/:id
+  # Test suite for PUT /users/:id
   describe 'PUT /users/:id' do
     let(:valid_attributes) { { name: 'Shopping' } }
 
@@ -97,7 +97,7 @@ RSpec.describe "Users", type: :request do
     end
   end
 
-  # Test suite for DELETE /todos/:id
+  # Test suite for DELETE /users/:id
   describe 'DELETE /users/:id' do
     before { delete "/users/#{user_id}" }
 

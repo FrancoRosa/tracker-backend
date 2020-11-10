@@ -10,7 +10,7 @@ RSpec.describe "Tracks", type: :request do
   describe 'GET /users/:user_id/tracks' do
     before { get "/users/#{user_id}/tracks" }
 
-    context 'when user exists' do
+    context 'when tracks exists' do
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
       end
@@ -62,7 +62,7 @@ RSpec.describe "Tracks", type: :request do
 
   # Test suite for PUT /users/:user_id/tracks
   describe 'POST /users/:user_id/tracks' do
-    let(:valid_attributes) { { name: 'Visit Narnia', done: false } }
+    let(:valid_attributes) { { name: 'DaylySteps' } }
 
     context 'when request attributes are valid' do
       before { post "/users/#{user_id}/tracks", params: valid_attributes }

@@ -10,14 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_16_152147) do
+ActiveRecord::Schema.define(version: 2020_11_16_154139) do
 
   create_table "records", force: :cascade do |t|
     t.float "value"
     t.integer "track_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id", null: false
     t.index ["track_id"], name: "index_records_on_track_id"
+    t.index ["user_id"], name: "index_records_on_user_id"
   end
 
   create_table "tracks", force: :cascade do |t|
@@ -37,5 +39,6 @@ ActiveRecord::Schema.define(version: 2020_11_16_152147) do
   end
 
   add_foreign_key "records", "tracks"
+  add_foreign_key "records", "users"
   add_foreign_key "tracks", "users"
 end

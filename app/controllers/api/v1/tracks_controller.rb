@@ -1,12 +1,12 @@
 module Api
   module V1
     class TracksController < ApplicationController
-      before_action :set_user
+      before_action :authorize_access_request!
       before_action :set_user_track, only: [:show, :update, :destroy]
 
       # GET /users/:user_id/tracks
       def index
-        json_response(@user.tracks)
+        json_response(current_user.tracks)
       end
 
       # GET /users/:user_id/tracks/:id
@@ -16,8 +16,8 @@ module Api
 
       # POST /users/:user_id/tracks
       def create
-        @user.tracks.create!(track_params)
-        json_response(@user, :created)
+        current_user.tracks.create!(track_params)
+        json_response(current_user, :created)
       end
 
       # PUT /users/:user_id/tracks/:id
@@ -38,12 +38,8 @@ module Api
         params.permit(:name)
       end
 
-      def set_user
-        @user = User.find(params[:user_id])
-      end
-
       def set_user_track
-        @track = @user.tracks.find_by!(id: params[:id]) if @user
+        @track = current_user.tracks.find_by!(id: params[:id]) if current_user
       end
     end
   end 

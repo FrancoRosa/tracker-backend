@@ -1,6 +1,4 @@
 class SigninController < ApplicationController
-  before_action :autorize_access_request!, only: [:destroy]
-
   def create
     user = User.find_by(email: user_params[:email])
     if user.nil?

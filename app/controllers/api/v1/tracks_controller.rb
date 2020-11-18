@@ -3,7 +3,6 @@ module Api
     class TracksController < ApplicationController
       before_action :set_user
       before_action :set_user_track, only: [:show, :update, :destroy]
-      @api_key = ENV['api_key']
       # GET /users/:user_id/tracks
       def index
         json_response(@user.tracks)
@@ -16,7 +15,6 @@ module Api
 
       # POST /users/:user_id/tracks
       def create
-        puts ">>>>>>>>>>>>> #{track_params[:name]}"
         track = @user.tracks.create!(name: track_params[:name])
         json_response({ track_id: track.id }, :created)
       end

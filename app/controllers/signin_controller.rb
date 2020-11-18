@@ -1,3 +1,4 @@
+
 class SigninController < ApplicationController
   before_action :autorize_access_request!, only: [:destroy]
   def create
@@ -5,23 +6,14 @@ class SigninController < ApplicationController
     if user.nil?
       not_found
     elsif user.authenticate(user_params[:password])
-      payload = { user_id: user.id }
-      session = JWTSessions::Session.new(payload: payload, refresh_by_access_allowed: true)
-      tokens = session.login
-      response.set_cookie(JWTSessions.access_cookie,
-                          value: tokens[:access],
-                          httponly: true,
-                          secure: Rails.env.production?)
-
-      render json: { crsf: tokens[:crsf] }
+      token = JWT.encode({user_id: user.id}, 'secret')
+      render json: { token: token }
     else
       wrong_password
     end
   end
 
   def destroy
-    session = JWTSessions::Session.new(payload: payload)
-    session.flush_by_access_payload
     render json: :ok
   end
 
@@ -32,11 +24,11 @@ class SigninController < ApplicationController
   end
 
   def not_found
-    render json: { error: 'Can not find user with requested email'}, status: :not_found
+    render json: { error: 'Can not find user with requested email' }, status: :not_found
   end
 
   def user_params
+    puts params.inspect
     params.require(:user).permit(:email, :password)
   end
-  
 end

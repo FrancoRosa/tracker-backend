@@ -1,12 +1,14 @@
-
 class SigninController < ApplicationController
   before_action :autorize_access_request!, only: [:destroy]
+
   def create
     user = User.find_by(email: user_params[:email])
     if user.nil?
       not_found
     elsif user.authenticate(user_params[:password])
-      token = JWT.encode({user_id: user.id}, 'secret')
+      time = Time.now.to_i
+      payload = { user_id: user.id, time: time }
+      token = JWT.encode(payload, ENV['api_key'])
       render json: { token: token }
     else
       wrong_password

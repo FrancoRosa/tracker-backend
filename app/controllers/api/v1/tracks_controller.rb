@@ -3,7 +3,7 @@ module Api
     class TracksController < ApplicationController
       before_action :set_user
       before_action :set_user_track, only: [:show, :update, :destroy]
-
+      @api_key = ENV['api_key']
       # GET /users/:user_id/tracks
       def index
         json_response(@user.tracks)
@@ -44,7 +44,11 @@ module Api
       end
 
       def set_user
-        user_id = JWT.decode(track_params[:token], 'secret')[0]['user_id']
+        decoded = JWT.decode(track_params[:token], ENV['api_key'])[0]
+        tokentime = decoded['time']
+        user_id = decoded['user_id']
+        time = Time.now.to_i
+        render json: { message: 'token expired' } if (time - tokentime) > 300
         @user = User.find(user_id)
       end
     end

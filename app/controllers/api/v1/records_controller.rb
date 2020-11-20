@@ -15,10 +15,17 @@ module Api
         json_response(@record)
       end
 
-      # POST /users/:user_id/tracks/:track_id/records/
+      # POST /users/tracks/:track_id/records/
       def create
-        @track.records.create!(record_params)
-        json_response(@track, :created)
+        record = @track.records.new(value: record_params[:value], user_id: @user.id)
+        if record.save
+          records = @track.records.pluck(:id, :value, :created_at).map do |id, value, date|
+            { id: id, value: value, date: date }
+          end
+          json_response(records)
+        else
+          render json: { error: record.errors.full_messages.join(', ') }
+        end
       end
 
       # PUT /users/:user_id/tracks/:track_id/records/:id
@@ -36,13 +43,14 @@ module Api
       private
 
       def record_params
-        params.permit(:value)
+        params.require(:record).permit(:value)
       end
 
       def set_user_track
-        puts ">>>>>>>>>>>>>>>>>>>><"
-        puts @user.inspect
-        @track = @user.tracks.find(params[:track_id]) if @user
+        @track = Track.find(params[:track_id]) if @user
+        p '>>>>>>>>>>>>>>>>>>>>>>>'
+        p @track.records.inspect
+        p '>>>>>>>>>>>>>>>>>>>>>>>'
       end
 
       def set_user_track_record

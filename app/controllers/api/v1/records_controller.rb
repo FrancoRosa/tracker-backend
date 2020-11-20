@@ -1,7 +1,7 @@
 module Api
   module V1
     class RecordsController < ApplicationController
-      before_action :authorize_access_request!
+      before_action :set_user
       before_action :set_user_track
       before_action :set_user_track_record, only: [:show, :update, :destroy]
 
@@ -40,7 +40,9 @@ module Api
       end
 
       def set_user_track
-        @track = current_user.tracks.find(params[:track_id]) if current_user
+        puts ">>>>>>>>>>>>>>>>>>>><"
+        puts @user.inspect
+        @track = @user.tracks.find(params[:track_id]) if @user
       end
 
       def set_user_track_record

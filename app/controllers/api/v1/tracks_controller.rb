@@ -11,14 +11,17 @@ module Api
 
       # GET /users/:user_id/tracks/:id
       def show
-        json_response(@track)
+        records = @track.records.pluck(:id, :value, :created_at).map do |id, value, created_at|
+          { id: id, value: value, created_at: created_at }
+        end
+        json_response(records)
       end
 
       # POST /users/:user_id/tracks
       def create
         track = @user.tracks.new(name: track_params[:name])
         if track.save
-          tracks = @user.tracks.all.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+          tracks = @user.tracks.pluck(:id, :name).map { |id, name| { id: id, name: name } }
           json_response(tracks)
         else
           render json: { error: track.errors.full_messages.join(', ') }
@@ -44,7 +47,8 @@ module Api
       end
 
       def set_user_track
-        @track = @user.tracks.find_by!(id: track_params[:id]) if @user
+
+        @track = @user.tracks.find_by!(id: params[:id]) if @user
       end
 
       def set_user

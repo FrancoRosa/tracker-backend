@@ -5,7 +5,8 @@ module Api
       before_action :set_user_track, only: [:show, :update, :destroy]
       # GET /users/:user_id/tracks
       def index
-        json_response(@user.tracks)
+        tracks = @user.tracks.all.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+        json_response(tracks)
       end
 
       # GET /users/:user_id/tracks/:id
@@ -15,8 +16,13 @@ module Api
 
       # POST /users/:user_id/tracks
       def create
-        track = @user.tracks.create!(name: track_params[:name])
-        json_response({ track_id: track.id }, :created)
+        track = @user.tracks.new(name: track_params[:name])
+        if track.save
+          tracks = @user.tracks.all.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+          json_response(tracks)
+        else
+          render json: { error: track.errors.full_messages.join(', ') }
+        end
       end
 
       # PUT /users/:user_id/tracks/:id
@@ -42,11 +48,11 @@ module Api
       end
 
       def set_user
-        decoded = JWT.decode(track_params[:token], ENV['api_key'])[0]
+        decoded = JWT.decode(params[:token], ENV['api_key'])[0]
         tokentime = decoded['time']
         user_id = decoded['user_id']
         time = Time.now.to_i
-        render json: { message: 'token expired' } if (time - tokentime) > 300
+        render json: { error: 'Token expired' } if (time - tokentime) > 300
         @user = User.find(user_id)
       end
     end

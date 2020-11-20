@@ -5,9 +5,9 @@ class SignupController < ApplicationController
       time = Time.now.to_i
       payload = { user_id: user.id, time: time }
       token = JWT.encode(payload, ENV['api_key'])
-      render json: { token: token }
+      render json: { name: user.name, email: user.email, token: token }
     else
-      render json: { error: user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      render json: { error: user.errors.full_messages.join(', ') }
     end
   end
 

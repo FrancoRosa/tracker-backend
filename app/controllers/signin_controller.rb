@@ -7,7 +7,7 @@ class SigninController < ApplicationController
       time = Time.now.to_i
       payload = { user_id: user.id, time: time }
       token = JWT.encode(payload, ENV['api_key'])
-      render json: { token: token }
+      render json: { name: user.name, email: user.email, token: token }
     else
       wrong_password
     end
@@ -20,11 +20,11 @@ class SigninController < ApplicationController
   private
 
   def wrong_password
-    render json: { error: 'Wrong password'}, status: :not_found
+    render json: { error: 'Wrong password'}
   end
 
   def not_found
-    render json: { error: 'Can not find user with requested email' }, status: :not_found
+    render json: { error: 'Can not find user with requested email' }
   end
 
   def user_params

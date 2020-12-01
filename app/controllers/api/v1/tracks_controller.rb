@@ -5,23 +5,21 @@ module Api
       before_action :set_user_track, only: [:show, :update, :destroy]
       # GET /users/:user_id/tracks
       def index
-        tracks = @user.tracks.all.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+        tracks = @user.tracks.all.select(:id, :name, :updated_at, :goal, :last_record, :category)
         json_response(tracks)
       end
 
       # GET /users/:user_id/tracks/:id
       def show
-        records = @track.records.pluck(:id, :value, :created_at).map do |id, value, created_at|
-          { id: id, value: value, created_at: created_at }
-        end
+        records = @track.records.select(:id, :value, :created_at)
         json_response(records)
       end
 
       # POST /users/:user_id/tracks
       def create
-        track = @user.tracks.new(name: track_params[:name])
+        track = @user.tracks.new(track_params)
         if track.save
-          tracks = @user.tracks.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+          tracks = @user.tracks.select(:id, :name, :updated_at, :goal, :last_record, :category)
           json_response(tracks)
         else
           render json: { error: track.errors.full_messages.join(', ') }
@@ -43,7 +41,7 @@ module Api
       private
 
       def track_params
-        params.require(:track).permit(:name, :token, :id)
+        params.require(:track).permit(:name, :token, :id, :goal, :category)
       end
 
       def set_user_track

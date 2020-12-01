@@ -15,9 +15,7 @@ class ApplicationController < ActionController::API
     tokentime = decoded['time']
     user_id = decoded['user_id']
     time = Time.now.to_i
-    render json: { error: 'Token expired' } if (time - tokentime) > 300
+    render json: { error: 'Token expired' } if (time - tokentime) > 3000
     @user = User.find(user_id)
-    p '???????????????????????????'
   end
-  
 end

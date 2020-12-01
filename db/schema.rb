@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_16_154139) do
+ActiveRecord::Schema.define(version: 2020_11_20_163150) do
 
   create_table "records", force: :cascade do |t|
     t.float "value"
@@ -27,6 +27,9 @@ ActiveRecord::Schema.define(version: 2020_11_16_154139) do
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.float "goal", default: 0.0
+    t.string "category", default: "other"
+    t.float "last_record", default: 0.0
     t.index ["user_id"], name: "index_tracks_on_user_id"
   end
 

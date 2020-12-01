@@ -20,7 +20,7 @@ class SigninController < ApplicationController
   private
 
   def wrong_password
-    render json: { error: 'Wrong password'}
+    render json: { error: 'Wrong password' }
   end
 
   def not_found

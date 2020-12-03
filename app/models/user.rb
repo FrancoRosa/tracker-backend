@@ -3,5 +3,5 @@ class User < ApplicationRecord
   has_many :records, dependent: :destroy
   has_many :tracks, dependent: :destroy
   validates :name, presence: true
-  validates :email, uniqueness: true
+  validates :email, presence: true, uniqueness: true
 end
